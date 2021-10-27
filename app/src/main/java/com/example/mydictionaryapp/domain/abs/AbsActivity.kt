@@ -14,14 +14,14 @@ import javax.inject.Inject
 
 abstract class AbsActivity(
     @LayoutRes contentLayoutId: Int
-) : AppCompatActivity(),
+) : AppCompatActivity(contentLayoutId),
     HasAndroidInjector {
 
     @Inject
     lateinit var androidInjector: DispatchingAndroidInjector<Any>
 
     @Inject
-    lateinit var router : Router
+    lateinit var router: Router
 
     @Inject
     lateinit var navigatorHolder: NavigatorHolder

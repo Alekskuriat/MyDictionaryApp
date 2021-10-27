@@ -8,6 +8,10 @@ data class Meanings(
     val translation: Translation?,
 
     @field:SerializedName("imageUrl")
-    val imageUrl: String?
+    val imageUrl: String?,
+
+    @field:SerializedName("difficultyLevel")
+    val difficultyLevel: Int,
+
 
 )

@@ -3,6 +3,7 @@ package com.example.mydictionaryapp.domain.di
 import android.content.Context
 import com.example.mydictionaryapp.domain.Application
 import com.example.mydictionaryapp.domain.di.modules.ApiModule
+import com.example.mydictionaryapp.domain.di.modules.DictionaryModule
 import com.example.popularlibraries.domain.schedulers.Schedulers
 import com.github.terrakok.cicerone.NavigatorHolder
 import com.github.terrakok.cicerone.Router
@@ -10,6 +11,7 @@ import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjectionModule
 import dagger.android.AndroidInjector
+import io.reactivex.rxjava3.disposables.CompositeDisposable
 import javax.inject.Singleton
 
 
@@ -17,7 +19,8 @@ import javax.inject.Singleton
 @Component(
     modules = [
         AndroidInjectionModule::class,
-        ApiModule::class
+        ApiModule::class,
+        DictionaryModule::class
     ]
 )
 interface ApplicationComponent : AndroidInjector<Application> {
@@ -36,6 +39,9 @@ interface ApplicationComponent : AndroidInjector<Application> {
 
         @BindsInstance
         fun withSchedulers(schedulers: Schedulers): Builder
+
+        @BindsInstance
+        fun withCompositeDisposable(disposable: CompositeDisposable): Builder
 
         fun build(): ApplicationComponent
     }

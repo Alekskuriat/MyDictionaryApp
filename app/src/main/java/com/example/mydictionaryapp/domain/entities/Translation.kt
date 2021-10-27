@@ -5,6 +5,9 @@ import com.google.gson.annotations.SerializedName
 data class Translation(
 
     @field:SerializedName("text")
-    val translation: String?
+    val translation: String?,
+
+    @field:SerializedName("note")
+    val note: String?
 
 )
