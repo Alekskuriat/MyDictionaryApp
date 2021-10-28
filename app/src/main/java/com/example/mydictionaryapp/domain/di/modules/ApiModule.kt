@@ -14,11 +14,15 @@ import retrofit2.converter.gson.GsonConverterFactory
 @Module
 class ApiModule {
 
+    companion object {
+        private const val BASE_URL = "https://dictionary.skyeng.ru/api/public/v1/"
+    }
+
     @Reusable
     @Provides
     fun provideWeatherApi(): ApiService =
         Retrofit.Builder()
-            .baseUrl("https://dictionary.skyeng.ru/api/public/v1/")
+            .baseUrl(BASE_URL)
             .client(
                 OkHttpClient.Builder()
                     .addInterceptor(HttpLoggingInterceptor().apply {
