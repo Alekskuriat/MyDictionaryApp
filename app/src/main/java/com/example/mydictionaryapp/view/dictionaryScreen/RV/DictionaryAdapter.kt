@@ -21,8 +21,7 @@ class DictionaryAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerItemViewHolder {
         return RecyclerItemViewHolder(
-            LayoutInflater.from(parent.context)
-                .inflate(
+            LayoutInflater.from(parent.context).inflate(
                     R.layout.item_word_translate,
                     parent,
                     false
@@ -45,11 +44,7 @@ class DictionaryAdapter(
                 itemView.apply {
                     findViewById<TextView>(R.id.header_textview_recycler_item).text = data.text
                     findViewById<TextView>(R.id.description_textview_recycler_item).text =
-                        data
-                            .meanings
-                            ?.first()
-                            ?.translation
-                            ?.translation
+                        data.meanings?.first()?.translation?.translation
                     setOnClickListener { openInNewWindow(data) }
                 }
 

@@ -65,23 +65,12 @@ class DictionaryFragment
     private fun setOnClickListenerFromButtons() {
         viewBinding.apply {
             searchButtonTextview.setOnClickListener {
-                val text =
-                    viewBinding
-                        .searchEditText.text.toString()
+                val text = viewBinding.searchEditText.text.toString()
 
                 if (text.isNotEmpty()) {
-                    presenter
-                        .getData(
-                            word = text,
-                            isOnline = true
-                        )
+                    presenter.getData(word = text, isOnline = true)
                 } else {
-                    Toast
-                        .makeText(
-                            context,
-                            getString(R.string.enter_a_word),
-                            Toast.LENGTH_SHORT
-                        ).show()
+                    Toast.makeText(context, getString(R.string.enter_a_word), Toast.LENGTH_SHORT).show()
                 }
             }
             clearTextImageview.setOnClickListener {
@@ -143,8 +132,7 @@ class DictionaryFragment
         viewBinding.apply {
             errorTextview.text = error ?: getString(R.string.undefined_error)
             reloadButton.setOnClickListener {
-                presenter
-                    .getData("hi", true)
+                presenter.getData("hi", true)
             }
         }
 
