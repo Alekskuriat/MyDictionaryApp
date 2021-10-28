@@ -4,13 +4,13 @@ import com.google.gson.annotations.SerializedName
 
 data class Meanings(
 
-    @field:SerializedName("translation")
+    @SerializedName("translation")
     val translation: Translation?,
 
-    @field:SerializedName("imageUrl")
+    @SerializedName("imageUrl")
     val imageUrl: String?,
 
-    @field:SerializedName("difficultyLevel")
+    @SerializedName("difficultyLevel")
     val difficultyLevel: Int,
 
 

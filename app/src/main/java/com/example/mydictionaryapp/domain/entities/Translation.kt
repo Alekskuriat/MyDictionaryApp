@@ -4,10 +4,10 @@ import com.google.gson.annotations.SerializedName
 
 data class Translation(
 
-    @field:SerializedName("text")
+    @SerializedName("text")
     val translation: String?,
 
-    @field:SerializedName("note")
+    @SerializedName("note")
     val note: String?
 
 )

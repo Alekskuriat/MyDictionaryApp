@@ -4,10 +4,10 @@ import com.google.gson.annotations.SerializedName
 
 data class DataModel(
 
-    @field:SerializedName("text")
+    @SerializedName("text")
     val text: String?,
 
-    @field:SerializedName("meanings")
+    @SerializedName("meanings")
     val meanings: List<Meanings>?
 
 )
