@@ -4,6 +4,7 @@ import com.example.mydictionaryapp.domain.api.ApiService
 import dagger.Module
 import dagger.Provides
 import dagger.Reusable
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -20,19 +21,28 @@ class ApiModule {
 
     @Reusable
     @Provides
-    fun provideWeatherApi(): ApiService =
+    fun provideWeatherApi(okHttpClient: OkHttpClient): ApiService =
         Retrofit.Builder()
             .baseUrl(BASE_URL)
-            .client(
-                OkHttpClient.Builder()
-                    .addInterceptor(HttpLoggingInterceptor().apply {
-                        level = HttpLoggingInterceptor.Level.BODY
-                    })
-                    .build()
-            )
+            .client(okHttpClient)
             .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(ApiService::class.java)
 
+    @Reusable
+    @Provides
+    fun provideOkHttpClient(httpLoggingInterceptor: HttpLoggingInterceptor) : OkHttpClient =
+        OkHttpClient
+            .Builder()
+            .addInterceptor(httpLoggingInterceptor)
+            .build()
+
+
+    @Reusable
+    @Provides
+    fun provideHttpLoggingInterceptor() : HttpLoggingInterceptor =
+        HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        }
 }
