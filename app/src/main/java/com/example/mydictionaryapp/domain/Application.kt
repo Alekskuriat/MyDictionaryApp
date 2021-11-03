@@ -20,6 +20,6 @@ class Application : DaggerApplication() {
                 withSchedulers(DefaultSchedulers())
                 withCompositeDisposable(CompositeDisposable())
             }
-            .build()
+              .build()
 }
 

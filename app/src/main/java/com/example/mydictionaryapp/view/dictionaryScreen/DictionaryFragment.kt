@@ -11,10 +11,8 @@ import com.example.dictionaryapp.model.entities.DataModel
 import com.example.mydictionaryapp.R
 import com.example.mydictionaryapp.databinding.FragmentDictionaryScreenBinding
 import com.example.mydictionaryapp.domain.abs.AbsFragment
-import com.example.mydictionaryapp.domain.dictionary.repo.DictionaryRepository
 import com.example.mydictionaryapp.view.dictionaryScreen.RV.DictionaryAdapter
 import com.example.mydictionaryapp.viewModel.DictionaryViewModel.DictionaryViewModel
-import com.example.mydictionaryapp.viewModel.MyViewModelFactory
 import javax.inject.Inject
 
 class DictionaryFragment
@@ -27,13 +25,9 @@ class DictionaryFragment
     private val viewBinding: FragmentDictionaryScreenBinding by viewBinding()
 
     @Inject
-    lateinit var repo: DictionaryRepository
+    internal lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    val model: DictionaryViewModel by lazy {
-        ViewModelProvider(this, MyViewModelFactory(repo, schedulers, disposable))
-            .get(DictionaryViewModel::class.java)
-    }
-
+    lateinit var model: DictionaryViewModel
 
     private var adapter: DictionaryAdapter? = null
 
@@ -57,6 +51,11 @@ class DictionaryFragment
                 ).show()
             }
         }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        model = viewModelFactory.create(DictionaryViewModel::class.java)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

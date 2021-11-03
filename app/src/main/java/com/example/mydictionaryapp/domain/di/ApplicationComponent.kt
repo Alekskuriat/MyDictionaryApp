@@ -4,6 +4,7 @@ import android.content.Context
 import com.example.mydictionaryapp.domain.Application
 import com.example.mydictionaryapp.domain.di.modules.ApiModule
 import com.example.mydictionaryapp.domain.di.modules.DictionaryModule
+import com.example.mydictionaryapp.domain.di.modules.ViewModelModule
 import com.example.popularlibraries.domain.schedulers.Schedulers
 import com.github.terrakok.cicerone.NavigatorHolder
 import com.github.terrakok.cicerone.Router
@@ -20,7 +21,8 @@ import javax.inject.Singleton
     modules = [
         AndroidInjectionModule::class,
         ApiModule::class,
-        DictionaryModule::class
+        DictionaryModule::class,
+        ViewModelModule::class
     ]
 )
 interface ApplicationComponent : AndroidInjector<Application> {
