@@ -8,6 +8,7 @@ import com.example.mydictionaryapp.domain.dictionary.dataSource.DictionaryRemote
 import com.example.mydictionaryapp.domain.dictionary.repo.DictionaryRepository
 import com.example.mydictionaryapp.domain.dictionary.repo.DictionaryRepositoryImpl
 import com.example.mydictionaryapp.view.dictionaryScreen.DictionaryFragment
+import com.example.mydictionaryapp.viewModel.DictionaryViewModel.DictionaryViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
