@@ -1,39 +1,31 @@
 package com.example.mydictionaryapp.view.dictionaryScreen
 
-import android.content.Context
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.View
 import android.widget.Toast
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.dictionaryapp.model.entities.DataModel
 import com.example.mydictionaryapp.R
 import com.example.mydictionaryapp.databinding.FragmentDictionaryScreenBinding
 import com.example.mydictionaryapp.domain.abs.AbsFragment
-import com.example.mydictionaryapp.domain.dictionary.repo.DictionaryRepository
-import com.example.mydictionaryapp.presenter.DictionaryPresenter.DictionaryPresenter
-import com.example.mydictionaryapp.presenter.DictionaryPresenter.DictionaryPresenterImpl
 import com.example.mydictionaryapp.view.dictionaryScreen.RV.DictionaryAdapter
+import com.example.mydictionaryapp.viewModel.DictionaryViewModel.DictionaryViewModel
 import javax.inject.Inject
 
 class DictionaryFragment
-    : AbsFragment(R.layout.fragment_dictionary_screen),
-    DictionaryView {
+    : AbsFragment(R.layout.fragment_dictionary_screen){
 
-    companion object {
-        fun newInstance() = DictionaryFragment()
-    }
-
-    private val viewBinding: FragmentDictionaryScreenBinding by viewBinding()
-
-    @Inject
-    lateinit var repo: DictionaryRepository
-
-    private lateinit var presenter: DictionaryPresenter<DictionaryView>
-
+    @Inject internal lateinit var viewModelFactory: ViewModelProvider.Factory
+    lateinit var model: DictionaryViewModel
     private var adapter: DictionaryAdapter? = null
+    private val viewBinding: FragmentDictionaryScreenBinding by viewBinding()
+    private val observerData = Observer<List<DataModel>> { showWords(it) }
+    private val observerErrors = Observer<Throwable> { showError(it) }
+    private val observerLoading = Observer<Boolean> { showLoading(it) }
+
 
     private val onListItemClickListener: DictionaryAdapter.OnListItemClickListener =
         object : DictionaryAdapter.OnListItemClickListener {
@@ -46,29 +38,34 @@ class DictionaryFragment
                     "${getString(R.string.difficulty_from_toast)}: ${data.meanings?.first()?.difficultyLevel.toString()}"
 
                 Toast.makeText(
-                    context,
-                    translate +
-                            "\n" +
-                            note +
-                            "\n" +
-                            difficulty,
-                    Toast.LENGTH_SHORT
+                    context, translate + "\n" + note + "\n" + difficulty, Toast.LENGTH_SHORT
                 ).show()
             }
         }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        model = viewModelFactory.create(DictionaryViewModel::class.java)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        model.getLoading().observe(viewLifecycleOwner, observerLoading)
         setOnClickListenerFromButtons()
+
     }
 
     private fun setOnClickListenerFromButtons() {
         viewBinding.apply {
             searchButtonTextview.setOnClickListener {
+
+                model.getError().observe(viewLifecycleOwner, observerErrors)
+
                 val text = viewBinding.searchEditText.text.toString()
 
                 if (text.isNotEmpty()) {
-                    presenter.getData(word = text, isOnline = true)
+                    model.getData(word = text, isOnline = true)
+                        .observe(viewLifecycleOwner, observerData)
                 } else {
                     Toast.makeText(context, getString(R.string.enter_a_word), Toast.LENGTH_SHORT).show()
                 }
@@ -79,28 +76,8 @@ class DictionaryFragment
         }
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        presenter = createPresenter()
-        presenter.attachView(this)
-    }
 
-    private fun createPresenter(): DictionaryPresenter<DictionaryView> =
-        DictionaryPresenterImpl(
-            repo,
-            router,
-            schedulers,
-            disposable
-        )
-
-    override fun onStop() {
-        presenter.detachView(this)
-        super.onStop()
-    }
-
-
-    override fun showWords(data: List<DataModel>?) {
-
+    private fun showWords(data: List<DataModel>?) {
         if (data == null || data.isEmpty()) {
             showErrorScreen(getString(R.string.empty_server_response_on_success))
         } else {
@@ -116,15 +93,14 @@ class DictionaryFragment
                 adapter!!.setData(data)
             }
         }
-
     }
 
-    override fun showError(error: Throwable) {
+    private fun showError(error: Throwable) {
         showErrorScreen(error.toString())
     }
 
-    override fun showLoading() {
-        showViewLoading()
+    private fun showLoading(boolean: Boolean) {
+        if (boolean) showViewLoading()
     }
 
     private fun showErrorScreen(error: String?) {
@@ -132,10 +108,10 @@ class DictionaryFragment
         viewBinding.apply {
             errorTextview.text = error ?: getString(R.string.undefined_error)
             reloadButton.setOnClickListener {
-                presenter.getData("hi", true)
+                model.getData("hi", true)
+                    .observe(viewLifecycleOwner, observerData)
             }
         }
-
     }
 
     private fun showViewSuccess() {
@@ -144,7 +120,6 @@ class DictionaryFragment
             progressBar.visibility = View.GONE
             errorLinearLayout.visibility = View.GONE
         }
-
     }
 
     private fun showViewLoading() {
@@ -153,7 +128,6 @@ class DictionaryFragment
             progressBar.visibility = View.VISIBLE
             errorLinearLayout.visibility = View.GONE
         }
-
     }
 
     private fun showViewError() {
@@ -163,6 +137,10 @@ class DictionaryFragment
             errorLinearLayout.visibility = View.VISIBLE
         }
 
+    }
+
+    companion object {
+        fun newInstance() = DictionaryFragment()
     }
 
 }
