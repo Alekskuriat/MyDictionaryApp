@@ -6,10 +6,9 @@ import com.example.mydictionaryapp.view.dictionaryScreen.DictionaryView
 import com.example.popularlibraries.domain.schedulers.Schedulers
 import com.github.terrakok.cicerone.Router
 import io.reactivex.rxjava3.disposables.CompositeDisposable
-import javax.inject.Inject
 
 class DictionaryPresenterImpl<V : DictionaryView>
-@Inject constructor(
+constructor(
     private val repo: DictionaryRepository,
     private val router: Router,
     private val schedulers: Schedulers,

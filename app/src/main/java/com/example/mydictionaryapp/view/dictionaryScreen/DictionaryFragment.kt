@@ -3,6 +3,7 @@ package com.example.mydictionaryapp.view.dictionaryScreen
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -10,15 +11,18 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.dictionaryapp.model.entities.DataModel
 import com.example.mydictionaryapp.R
 import com.example.mydictionaryapp.databinding.FragmentDictionaryScreenBinding
-import com.example.mydictionaryapp.domain.abs.AbsFragment
 import com.example.mydictionaryapp.view.dictionaryScreen.RV.DictionaryAdapter
 import com.example.mydictionaryapp.viewModel.DictionaryViewModel.DictionaryViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
+
+
 import javax.inject.Inject
 
 class DictionaryFragment
-    : AbsFragment(R.layout.fragment_dictionary_screen){
+    : Fragment(R.layout.fragment_dictionary_screen){
 
-    @Inject internal lateinit var viewModelFactory: ViewModelProvider.Factory
+
+    private val viewModel: DictionaryViewModel by viewModel()
     lateinit var model: DictionaryViewModel
     private var adapter: DictionaryAdapter? = null
     private val viewBinding: FragmentDictionaryScreenBinding by viewBinding()
@@ -45,7 +49,7 @@ class DictionaryFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        model = viewModelFactory.create(DictionaryViewModel::class.java)
+        model = viewModel
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

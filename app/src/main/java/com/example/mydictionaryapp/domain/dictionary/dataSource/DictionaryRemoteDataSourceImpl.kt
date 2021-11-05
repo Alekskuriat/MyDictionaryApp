@@ -6,7 +6,7 @@ import io.reactivex.rxjava3.core.Observable
 import javax.inject.Inject
 
 class DictionaryRemoteDataSourceImpl
-@Inject constructor(
+constructor(
     private val apiService: ApiService
 ) : DictionaryRemoteDataSource {
 

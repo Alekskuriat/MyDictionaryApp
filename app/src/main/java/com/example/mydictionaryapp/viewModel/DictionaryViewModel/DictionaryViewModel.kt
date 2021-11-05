@@ -8,8 +8,7 @@ import com.example.popularlibraries.domain.schedulers.Schedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import javax.inject.Inject
 
-class DictionaryViewModel
-    @Inject constructor(
+class DictionaryViewModel(
     private val repo: DictionaryRepository,
     private var schedulers: Schedulers,
     private var disposable: CompositeDisposable,

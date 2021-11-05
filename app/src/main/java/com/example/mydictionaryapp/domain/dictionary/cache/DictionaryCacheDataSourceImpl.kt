@@ -4,10 +4,7 @@ import com.example.dictionaryapp.model.entities.DataModel
 import io.reactivex.rxjava3.core.Observable
 import javax.inject.Inject
 
-class DictionaryCacheDataSourceImpl
-    @Inject constructor(
-
-    ): DictionaryCacheDataSource {
+class DictionaryCacheDataSourceImpl : DictionaryCacheDataSource {
 
     override fun getData(word: String): Observable<List<DataModel>> {
         TODO("Not yet implemented")
