@@ -18,19 +18,10 @@ import javax.inject.Inject
 class DictionaryFragment
     : AbsFragment(R.layout.fragment_dictionary_screen){
 
-    companion object {
-        fun newInstance() = DictionaryFragment()
-    }
-
-    private val viewBinding: FragmentDictionaryScreenBinding by viewBinding()
-
-    @Inject
-    internal lateinit var viewModelFactory: ViewModelProvider.Factory
-
+    @Inject internal lateinit var viewModelFactory: ViewModelProvider.Factory
     lateinit var model: DictionaryViewModel
-
     private var adapter: DictionaryAdapter? = null
-
+    private val viewBinding: FragmentDictionaryScreenBinding by viewBinding()
     private val observerData = Observer<List<DataModel>> { showWords(it) }
     private val observerErrors = Observer<Throwable> { showError(it) }
     private val observerLoading = Observer<Boolean> { showLoading(it) }
@@ -87,7 +78,6 @@ class DictionaryFragment
 
 
     private fun showWords(data: List<DataModel>?) {
-
         if (data == null || data.isEmpty()) {
             showErrorScreen(getString(R.string.empty_server_response_on_success))
         } else {
@@ -103,7 +93,6 @@ class DictionaryFragment
                 adapter!!.setData(data)
             }
         }
-
     }
 
     private fun showError(error: Throwable) {
@@ -123,7 +112,6 @@ class DictionaryFragment
                     .observe(viewLifecycleOwner, observerData)
             }
         }
-
     }
 
     private fun showViewSuccess() {
@@ -132,7 +120,6 @@ class DictionaryFragment
             progressBar.visibility = View.GONE
             errorLinearLayout.visibility = View.GONE
         }
-
     }
 
     private fun showViewLoading() {
@@ -141,7 +128,6 @@ class DictionaryFragment
             progressBar.visibility = View.VISIBLE
             errorLinearLayout.visibility = View.GONE
         }
-
     }
 
     private fun showViewError() {
@@ -151,6 +137,10 @@ class DictionaryFragment
             errorLinearLayout.visibility = View.VISIBLE
         }
 
+    }
+
+    companion object {
+        fun newInstance() = DictionaryFragment()
     }
 
 }

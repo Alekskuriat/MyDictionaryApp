@@ -15,7 +15,6 @@ class DictionaryViewModel
     private var disposable: CompositeDisposable,
 ) : BaseViewModel() {
 
-
     override fun getData(word: String, isOnline: Boolean): LiveData<List<DataModel>> {
         loadingData(word)
         return dataLiveData

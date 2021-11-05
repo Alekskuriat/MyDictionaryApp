@@ -15,10 +15,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 @Module
 class ApiModule {
 
-    companion object {
-        private const val BASE_URL = "https://dictionary.skyeng.ru/api/public/v1/"
-    }
-
     @Reusable
     @Provides
     fun provideWeatherApi(okHttpClient: OkHttpClient): ApiService =
@@ -32,17 +28,20 @@ class ApiModule {
 
     @Reusable
     @Provides
-    fun provideOkHttpClient(httpLoggingInterceptor: HttpLoggingInterceptor) : OkHttpClient =
+    fun provideOkHttpClient(httpLoggingInterceptor: HttpLoggingInterceptor): OkHttpClient =
         OkHttpClient
             .Builder()
             .addInterceptor(httpLoggingInterceptor)
             .build()
 
-
     @Reusable
     @Provides
-    fun provideHttpLoggingInterceptor() : HttpLoggingInterceptor =
+    fun provideHttpLoggingInterceptor(): HttpLoggingInterceptor =
         HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
         }
+
+    companion object {
+        private const val BASE_URL = "https://dictionary.skyeng.ru/api/public/v1/"
+    }
 }

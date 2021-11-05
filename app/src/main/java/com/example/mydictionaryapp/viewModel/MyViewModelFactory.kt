@@ -21,7 +21,6 @@ class MyViewModelFactory
 ) :
     ViewModelProvider.Factory {
 
-
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         val creator = viewModels[modelClass]
             ?: viewModels.asIterable().firstOrNull { modelClass.isAssignableFrom(it.key) }?.value
@@ -31,7 +30,5 @@ class MyViewModelFactory
         } catch (e: Exception) {
             throw RuntimeException(e)
         }
-
     }
-
 }

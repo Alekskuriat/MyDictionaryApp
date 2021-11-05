@@ -11,10 +11,7 @@ abstract class BaseViewModel(
     protected val loadingLiveData: MutableLiveData<Boolean> = MutableLiveData()
 ) : ViewModel() {
 
-
     open fun getData(word: String, isOnline: Boolean): LiveData<List<DataModel>> = dataLiveData
-
     open fun getError(): LiveData<Throwable> = errorLiveData
-
     open fun getLoading(): LiveData<Boolean> = loadingLiveData
 }
