@@ -18,6 +18,7 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.core.qualifier.named
+import org.koin.core.scope.get
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
@@ -26,29 +27,33 @@ import retrofit2.converter.gson.GsonConverterFactory
 class KoinModules {
 
     fun getModules() = module {
+        single<Cicerone<Router>> { Cicerone.create() }
+        single<Router> { get<Cicerone<Router>>().router }
+        single<NavigatorHolder> { get<Cicerone<Router>>().getNavigatorHolder() }
+        single<Schedulers> { DefaultSchedulers() }
+        single<CompositeDisposable> { CompositeDisposable() }
 
-        single<Schedulers> {
-            DefaultSchedulers()
+        single<OkHttpClient> {
+            OkHttpClient
+                .Builder()
+                .addInterceptor(get<HttpLoggingInterceptor>())
+                .build()
         }
-        single<CompositeDisposable> {
-            CompositeDisposable()
+        single<HttpLoggingInterceptor>{
+            HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BODY
+            }
         }
         single<ApiService> {
             Retrofit.Builder()
                 .baseUrl(KoinModules.BASE_URL)
-                .client(
-                    OkHttpClient
-                        .Builder()
-                        .addInterceptor(HttpLoggingInterceptor().apply {
-                            level = HttpLoggingInterceptor.Level.BODY
-                        })
-                        .build()
-                )
+                .client(get<OkHttpClient>())
                 .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(ApiService::class.java)
         }
+
         single<DictionaryRemoteDataSource> { DictionaryRemoteDataSourceImpl(apiService = get()) }
         single<DictionaryCacheDataSource> { DictionaryCacheDataSourceImpl() }
 
