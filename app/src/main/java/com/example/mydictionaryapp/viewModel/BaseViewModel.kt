@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.dictionaryapp.model.entities.DataModel
+import kotlinx.coroutines.*
 
 abstract class BaseViewModel(
     protected val dataLiveData: MutableLiveData<List<DataModel>> = MutableLiveData(),
@@ -11,7 +12,19 @@ abstract class BaseViewModel(
     protected val loadingLiveData: MutableLiveData<Boolean> = MutableLiveData()
 ) : ViewModel() {
 
+    protected val viewModelCoroutineScope = CoroutineScope(
+        Dispatchers.Main
+                + SupervisorJob()
+                + CoroutineExceptionHandler { _, throwable ->
+            handleError(throwable)
+        })
+
     open fun getData(word: String, isOnline: Boolean): LiveData<List<DataModel>> = dataLiveData
     open fun getError(): LiveData<Throwable> = errorLiveData
     open fun getLoading(): LiveData<Boolean> = loadingLiveData
+    abstract fun handleError(error: Throwable)
+    protected fun cancelJob() =  viewModelCoroutineScope.coroutineContext.cancelChildren()
+
+
+
 }

@@ -12,7 +12,7 @@ constructor(
     private val cache: DictionaryCacheDataSource
 ) : DictionaryRepository {
 
-    override fun getData(word: String, fromRemoteSource: Boolean): Observable<List<DataModel>> {
+    override suspend fun getData(word: String, fromRemoteSource: Boolean): List<DataModel> {
         return if (fromRemoteSource) {
             data.getData(word)
         } else {

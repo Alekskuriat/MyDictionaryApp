@@ -14,6 +14,7 @@ import com.example.popularlibraries.domain.schedulers.Schedulers
 import com.github.terrakok.cicerone.Cicerone
 import com.github.terrakok.cicerone.NavigatorHolder
 import com.github.terrakok.cicerone.Router
+import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -30,8 +31,6 @@ class KoinModules {
         single<Cicerone<Router>> { Cicerone.create() }
         single<Router> { get<Cicerone<Router>>().router }
         single<NavigatorHolder> { get<Cicerone<Router>>().getNavigatorHolder() }
-        single<Schedulers> { DefaultSchedulers() }
-        single<CompositeDisposable> { CompositeDisposable() }
 
         single<OkHttpClient> {
             OkHttpClient
@@ -39,16 +38,17 @@ class KoinModules {
                 .addInterceptor(get<HttpLoggingInterceptor>())
                 .build()
         }
-        single<HttpLoggingInterceptor>{
+        single<HttpLoggingInterceptor> {
             HttpLoggingInterceptor().apply {
                 level = HttpLoggingInterceptor.Level.BODY
             }
         }
+        single<CoroutineCallAdapterFactory> { CoroutineCallAdapterFactory() }
         single<ApiService> {
             Retrofit.Builder()
                 .baseUrl(KoinModules.BASE_URL)
                 .client(get<OkHttpClient>())
-                .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
+                .addCallAdapterFactory(get<CoroutineCallAdapterFactory>())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(ApiService::class.java)
@@ -58,7 +58,7 @@ class KoinModules {
         single<DictionaryCacheDataSource> { DictionaryCacheDataSourceImpl() }
 
         factory<DictionaryRepository> { DictionaryRepositoryImpl(data = get(), cache = get()) }
-        factory { DictionaryViewModel(repo = get(), schedulers = get(), disposable = get()) }
+        factory { DictionaryViewModel(repo = get()) }
 
     }
 
