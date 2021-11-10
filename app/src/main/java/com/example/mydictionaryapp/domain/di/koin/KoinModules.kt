@@ -1,5 +1,6 @@
 package com.example.mydictionaryapp.domain.di.koin
 
+import com.example.mydictionaryapp.BuildConfig
 import com.example.mydictionaryapp.MainActivity
 import com.example.mydictionaryapp.domain.api.ApiService
 import com.example.mydictionaryapp.domain.dictionary.cache.DictionaryCacheDataSource
@@ -33,10 +34,9 @@ class KoinModules {
         single<NavigatorHolder> { get<Cicerone<Router>>().getNavigatorHolder() }
 
         single<OkHttpClient> {
-            OkHttpClient
-                .Builder()
-                .addInterceptor(get<HttpLoggingInterceptor>())
-                .build()
+            val okHttpClient = OkHttpClient.Builder()
+            if (BuildConfig.DEBUG) okHttpClient.addInterceptor(get<HttpLoggingInterceptor>())
+            return@single okHttpClient.build()
         }
         single<HttpLoggingInterceptor> {
             HttpLoggingInterceptor().apply {
