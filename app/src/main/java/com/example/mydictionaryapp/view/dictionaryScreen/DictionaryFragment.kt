@@ -2,6 +2,7 @@ package com.example.mydictionaryapp.view.dictionaryScreen
 
 import android.os.Bundle
 import android.view.View
+import android.widget.SearchView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -12,6 +13,11 @@ import com.example.mydictionaryapp.R
 import com.example.mydictionaryapp.databinding.FragmentDictionaryScreenBinding
 import com.example.mydictionaryapp.view.dictionaryScreen.RV.DictionaryAdapter
 import com.example.mydictionaryapp.viewModel.DictionaryViewModel.DictionaryViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -26,6 +32,8 @@ class DictionaryFragment
     private val observerErrors = Observer<Throwable> { showError(it) }
     private val observerLoading = Observer<Boolean> { showLoading(it) }
     private var text = ""
+    private val job: Job = Job()
+    private val queryStateFlow = MutableStateFlow("")
 
     private val onListItemClickListener: DictionaryAdapter.OnListItemClickListener =
         object : DictionaryAdapter.OnListItemClickListener {
@@ -63,26 +71,33 @@ class DictionaryFragment
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         model.getLoading().observe(viewLifecycleOwner, observerLoading)
-        setOnClickListenerFromButtons()
+        model.getError().observe(viewLifecycleOwner, observerErrors)
+        setUpSearchStateFlow()
     }
 
-    private fun setOnClickListenerFromButtons() {
-        viewBinding.apply {
-            searchButtonTextview.setOnClickListener {
-                model.getError().observe(viewLifecycleOwner, observerErrors)
-                text = viewBinding.searchEditText.text.toString()
-                if (text.isNotEmpty()) {
-                    model.getData(word = text, isOnline = true)
-                        .observe(viewLifecycleOwner, observerData)
-                } else {
-                    Toast.makeText(context, getString(R.string.enter_a_word), Toast.LENGTH_SHORT)
-                        .show()
+
+    private fun setUpSearchStateFlow() {
+        CoroutineScope(Dispatchers.Main + job).launch {
+            queryStateFlow
+                .debounce(500)
+                .distinctUntilChanged()
+                .collect { result ->
+                    model.getData(result, true).observe(viewLifecycleOwner, observerData)
                 }
-            }
-            clearTextImageview.setOnClickListener {
-                searchEditText.setText("")
-            }
         }
+
+        viewBinding.searchView.setOnQueryTextListener(object :
+            SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                query?.let { queryStateFlow.value = it }
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String): Boolean {
+                queryStateFlow.value = newText
+                return true
+            }
+        })
     }
 
     private fun showWords(data: List<DataModel>?) {
@@ -147,9 +162,19 @@ class DictionaryFragment
 
     }
 
+    override fun onDestroy() {
+        job.cancel()
+        super.onDestroy()
+    }
+
     companion object {
         fun newInstance() = DictionaryFragment()
         private const val WORD_KEY = "word_key"
     }
 }
+
+
+
+
+
 

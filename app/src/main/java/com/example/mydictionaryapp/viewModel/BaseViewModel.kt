@@ -23,7 +23,7 @@ abstract class BaseViewModel(
     open fun getError(): LiveData<Throwable> = errorLiveData
     open fun getLoading(): LiveData<Boolean> = loadingLiveData
     abstract fun handleError(error: Throwable)
-    protected fun cancelJob(job : Job?) = job?.cancel()
+    protected fun cancelJob(job : Job) = job.cancel()
 
 
 

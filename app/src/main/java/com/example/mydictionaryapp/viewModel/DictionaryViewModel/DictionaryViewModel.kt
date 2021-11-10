@@ -10,7 +10,7 @@ class DictionaryViewModel(
     private val repo: DictionaryRepository
 ) : BaseViewModel() {
 
-    private var job: Job? = null
+    private var job: Job = Job()
 
     override fun getData(word: String, isOnline: Boolean): LiveData<List<DataModel>> {
         loadingData(word)
