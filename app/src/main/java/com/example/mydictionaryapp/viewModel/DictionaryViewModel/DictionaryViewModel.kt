@@ -4,13 +4,13 @@ import androidx.lifecycle.LiveData
 import com.example.dictionaryapp.model.entities.DataModel
 import com.example.mydictionaryapp.domain.dictionary.repo.DictionaryRepository
 import com.example.mydictionaryapp.viewModel.BaseViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 
 class DictionaryViewModel(
     private val repo: DictionaryRepository
 ) : BaseViewModel() {
+
+    private var job: Job? = null
 
     override fun getData(word: String, isOnline: Boolean): LiveData<List<DataModel>> {
         loadingData(word)
@@ -18,12 +18,12 @@ class DictionaryViewModel(
     }
 
     private fun loadingData(word: String) {
-        cancelJob()
+        cancelJob(job)
         loadingLiveData.postValue(true)
-        viewModelCoroutineScope.launch { startRepo(word) }
+        job = viewModelCoroutineScope.launch { startRepo(word) }
     }
 
-    private suspend fun startRepo(word: String) = withContext(Dispatchers.IO) {
+    private suspend fun startRepo(word: String) {
         loadingLiveData.postValue(false)
         dataLiveData.postValue(repo.getData(word, true))
     }
@@ -35,6 +35,7 @@ class DictionaryViewModel(
 
     override fun onCleared() {
         dataLiveData.postValue(null)
+        viewModelCoroutineScope.cancel()
         super.onCleared()
     }
 }

@@ -13,7 +13,7 @@ abstract class BaseViewModel(
 ) : ViewModel() {
 
     protected val viewModelCoroutineScope = CoroutineScope(
-        Dispatchers.Main
+        Dispatchers.IO
                 + SupervisorJob()
                 + CoroutineExceptionHandler { _, throwable ->
             handleError(throwable)
@@ -23,7 +23,7 @@ abstract class BaseViewModel(
     open fun getError(): LiveData<Throwable> = errorLiveData
     open fun getLoading(): LiveData<Boolean> = loadingLiveData
     abstract fun handleError(error: Throwable)
-    protected fun cancelJob() =  viewModelCoroutineScope.coroutineContext.cancelChildren()
+    protected fun cancelJob(job : Job?) = job?.cancel()
 
 
 

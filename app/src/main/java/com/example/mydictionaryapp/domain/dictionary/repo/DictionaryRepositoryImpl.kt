@@ -7,7 +7,7 @@ import io.reactivex.rxjava3.core.Observable
 import javax.inject.Inject
 
 class DictionaryRepositoryImpl
-constructor(
+    (
     private val data: DictionaryRemoteDataSource,
     private val cache: DictionaryCacheDataSource
 ) : DictionaryRepository {

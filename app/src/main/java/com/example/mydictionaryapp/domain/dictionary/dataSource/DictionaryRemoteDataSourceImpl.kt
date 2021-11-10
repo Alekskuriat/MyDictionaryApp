@@ -5,7 +5,7 @@ import com.example.mydictionaryapp.domain.api.ApiService
 import io.reactivex.rxjava3.core.Observable
 
 class DictionaryRemoteDataSourceImpl
-constructor(
+    (
     private val apiService: ApiService
 ) : DictionaryRemoteDataSource {
 
