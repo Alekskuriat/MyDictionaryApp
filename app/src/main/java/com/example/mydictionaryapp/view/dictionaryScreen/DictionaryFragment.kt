@@ -3,34 +3,33 @@ package com.example.mydictionaryapp.view.dictionaryScreen
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.dictionaryapp.model.entities.DataModel
 import com.example.mydictionaryapp.R
 import com.example.mydictionaryapp.databinding.FragmentDictionaryScreenBinding
-import com.example.mydictionaryapp.domain.abs.AbsFragment
 import com.example.mydictionaryapp.view.dictionaryScreen.RV.DictionaryAdapter
 import com.example.mydictionaryapp.viewModel.DictionaryViewModel.DictionaryViewModel
-import javax.inject.Inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
+
 
 class DictionaryFragment
-    : AbsFragment(R.layout.fragment_dictionary_screen){
+    : Fragment(R.layout.fragment_dictionary_screen) {
 
-    @Inject internal lateinit var viewModelFactory: ViewModelProvider.Factory
+    private val viewModel: DictionaryViewModel by viewModel()
     lateinit var model: DictionaryViewModel
     private var adapter: DictionaryAdapter? = null
     private val viewBinding: FragmentDictionaryScreenBinding by viewBinding()
     private val observerData = Observer<List<DataModel>> { showWords(it) }
     private val observerErrors = Observer<Throwable> { showError(it) }
     private val observerLoading = Observer<Boolean> { showLoading(it) }
-
+    private var text = ""
 
     private val onListItemClickListener: DictionaryAdapter.OnListItemClickListener =
         object : DictionaryAdapter.OnListItemClickListener {
             override fun onItemClick(data: DataModel) {
-
                 val translate = "${getString(R.string.translate_from_toast)}: ${data.text}"
                 val note =
                     "${getString(R.string.note_from_toast)}: ${data.meanings?.first()?.translation?.note}"
@@ -45,29 +44,39 @@ class DictionaryFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        model = viewModelFactory.create(DictionaryViewModel::class.java)
+        model = viewModel
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(WORD_KEY, text)
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        if (savedInstanceState != null) {
+            text = savedInstanceState.getString(WORD_KEY).toString()
+            model.getData(text, true).observe(viewLifecycleOwner, observerData)
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         model.getLoading().observe(viewLifecycleOwner, observerLoading)
         setOnClickListenerFromButtons()
-
     }
 
     private fun setOnClickListenerFromButtons() {
         viewBinding.apply {
             searchButtonTextview.setOnClickListener {
-
                 model.getError().observe(viewLifecycleOwner, observerErrors)
-
-                val text = viewBinding.searchEditText.text.toString()
-
+                text = viewBinding.searchEditText.text.toString()
                 if (text.isNotEmpty()) {
                     model.getData(word = text, isOnline = true)
                         .observe(viewLifecycleOwner, observerData)
                 } else {
-                    Toast.makeText(context, getString(R.string.enter_a_word), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, getString(R.string.enter_a_word), Toast.LENGTH_SHORT)
+                        .show()
                 }
             }
             clearTextImageview.setOnClickListener {
@@ -75,7 +84,6 @@ class DictionaryFragment
             }
         }
     }
-
 
     private fun showWords(data: List<DataModel>?) {
         if (data == null || data.isEmpty()) {
@@ -141,7 +149,7 @@ class DictionaryFragment
 
     companion object {
         fun newInstance() = DictionaryFragment()
+        private const val WORD_KEY = "word_key"
     }
-
 }
 

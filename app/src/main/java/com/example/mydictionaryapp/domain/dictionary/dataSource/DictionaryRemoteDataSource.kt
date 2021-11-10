@@ -5,6 +5,6 @@ import io.reactivex.rxjava3.core.Observable
 
 interface DictionaryRemoteDataSource {
 
-    fun getData(word: String): Observable<List<DataModel>>
+    suspend fun getData(word: String): List<DataModel>
 
 }

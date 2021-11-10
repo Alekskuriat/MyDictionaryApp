@@ -4,16 +4,13 @@ import androidx.lifecycle.LiveData
 import com.example.dictionaryapp.model.entities.DataModel
 import com.example.mydictionaryapp.domain.dictionary.repo.DictionaryRepository
 import com.example.mydictionaryapp.viewModel.BaseViewModel
-import com.example.popularlibraries.domain.schedulers.Schedulers
-import io.reactivex.rxjava3.disposables.CompositeDisposable
-import javax.inject.Inject
+import kotlinx.coroutines.*
 
-class DictionaryViewModel
-    @Inject constructor(
-    private val repo: DictionaryRepository,
-    private var schedulers: Schedulers,
-    private var disposable: CompositeDisposable,
+class DictionaryViewModel(
+    private val repo: DictionaryRepository
 ) : BaseViewModel() {
+
+    private var job: Job? = null
 
     override fun getData(word: String, isOnline: Boolean): LiveData<List<DataModel>> {
         loadingData(word)
@@ -21,29 +18,24 @@ class DictionaryViewModel
     }
 
     private fun loadingData(word: String) {
-        disposable.add(
-            repo
-                .getData(word, true)
-                .observeOn(schedulers.main())
-                .subscribeOn(schedulers.background())
-                .doOnSubscribe {
-                    loadingLiveData.postValue(true)
-                }
-                .subscribe(
-                    {
-                        dataLiveData.postValue(it)
-                        loadingLiveData.postValue(false)
-                    },
-                    {
-                        errorLiveData.postValue(it)
-                        loadingLiveData.postValue(false)
-                    }
-                )
-        )
+        cancelJob(job)
+        loadingLiveData.postValue(true)
+        job = viewModelCoroutineScope.launch { startRepo(word) }
+    }
+
+    private suspend fun startRepo(word: String) {
+        loadingLiveData.postValue(false)
+        dataLiveData.postValue(repo.getData(word, true))
+    }
+
+    override fun handleError(error: Throwable) {
+        loadingLiveData.postValue(false)
+        errorLiveData.postValue(error)
     }
 
     override fun onCleared() {
-        disposable.clear()
+        dataLiveData.postValue(null)
+        viewModelCoroutineScope.cancel()
         super.onCleared()
     }
 }
