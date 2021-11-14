@@ -1,8 +1,11 @@
 package com.example.mydictionaryapp.domain.di.koin
 
+import androidx.room.Room
 import com.example.mydictionaryapp.BuildConfig
 import com.example.mydictionaryapp.MainActivity
 import com.example.mydictionaryapp.domain.api.ApiService
+import com.example.mydictionaryapp.domain.database.HistoryDao
+import com.example.mydictionaryapp.domain.database.HistoryDataBase
 import com.example.mydictionaryapp.domain.dictionary.cache.DictionaryCacheDataSource
 import com.example.mydictionaryapp.domain.dictionary.cache.DictionaryCacheDataSourceImpl
 import com.example.mydictionaryapp.domain.dictionary.dataSource.DictionaryRemoteDataSource
@@ -33,6 +36,14 @@ class KoinModules {
         single<Router> { get<Cicerone<Router>>().router }
         single<NavigatorHolder> { get<Cicerone<Router>>().getNavigatorHolder() }
 
+        single {
+            Room.databaseBuilder(get(), HistoryDataBase::class.java, "HistoryDB").build()
+        }
+        single<HistoryDao> { get<HistoryDataBase>().historyDao() }
+
+
+
+
         single<OkHttpClient> {
             val okHttpClient = OkHttpClient.Builder()
             if (BuildConfig.DEBUG) okHttpClient.addInterceptor(get<HttpLoggingInterceptor>())
@@ -55,7 +66,7 @@ class KoinModules {
         }
 
         single<DictionaryRemoteDataSource> { DictionaryRemoteDataSourceImpl(apiService = get()) }
-        single<DictionaryCacheDataSource> { DictionaryCacheDataSourceImpl() }
+        single<DictionaryCacheDataSource> { DictionaryCacheDataSourceImpl(database = get()) }
 
         factory<DictionaryRepository> { DictionaryRepositoryImpl(data = get(), cache = get()) }
         factory { DictionaryViewModel(repo = get()) }

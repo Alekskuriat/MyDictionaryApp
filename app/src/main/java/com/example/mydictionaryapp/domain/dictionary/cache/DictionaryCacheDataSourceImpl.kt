@@ -1,13 +1,40 @@
 package com.example.mydictionaryapp.domain.dictionary.cache
 
 import com.example.dictionaryapp.model.entities.DataModel
-import io.reactivex.rxjava3.core.Observable
-import javax.inject.Inject
+import com.example.dictionaryapp.model.entities.Meanings
+import com.example.dictionaryapp.model.entities.Translation
+import com.example.mydictionaryapp.domain.database.HistoryDao
+import com.example.mydictionaryapp.domain.database.HistoryDataBase
+import com.example.mydictionaryapp.domain.database.HistoryEntity
 
-class DictionaryCacheDataSourceImpl : DictionaryCacheDataSource {
+class DictionaryCacheDataSourceImpl(
+    private val database: HistoryDao
+) : DictionaryCacheDataSource {
 
-    override suspend fun getData(word: String): List<DataModel> {
-        TODO("Not yet implemented")
+    override suspend fun saveToDB(data: DataModel) {
+        database.insert(
+            HistoryEntity(
+                word = data.text.toString(),
+                description = data.meanings?.first()?.translation?.translation.toString()
+            )
+        )
+    }
+
+    override suspend fun getData(word: String): DataModel {
+        val wordInDB = database.getDataByWord(word)
+        return DataModel(
+            text = wordInDB.word,
+            listOf(
+                Meanings(
+                    Translation(
+                        translation = wordInDB.description,
+                        note = null
+                    ),
+                    imageUrl = null,
+                    difficultyLevel = 0
+                )
+            )
+        )
     }
 
 }

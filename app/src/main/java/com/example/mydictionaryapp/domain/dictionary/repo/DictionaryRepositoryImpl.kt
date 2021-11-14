@@ -13,12 +13,13 @@ class DictionaryRepositoryImpl
 ) : DictionaryRepository {
 
     override suspend fun getData(word: String, fromRemoteSource: Boolean): List<DataModel> {
-        return if (fromRemoteSource) {
-            data.getData(word)
-        } else {
-            cache.getData(word)
+        val listData = data.getData(word)
+        if (!listData.isNullOrEmpty()) {
+            for (entity in listData) {
+                cache.saveToDB(entity)
+            }
         }
-
+        return listData
     }
 
 }
