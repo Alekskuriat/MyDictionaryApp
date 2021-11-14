@@ -34,6 +34,7 @@ class DictionaryFragment
     private var text = ""
     private val job: Job = Job()
     private val queryStateFlow = MutableStateFlow("")
+    private var scope: CoroutineScope = CoroutineScope(Dispatchers.Main + job)
 
     private val onListItemClickListener: DictionaryAdapter.OnListItemClickListener =
         object : DictionaryAdapter.OnListItemClickListener {
@@ -77,9 +78,9 @@ class DictionaryFragment
 
 
     private fun setUpSearchStateFlow() {
-        CoroutineScope(Dispatchers.Main + job).launch {
+        scope.launch {
             queryStateFlow
-                .debounce(500)
+                .debounce(DEBOUNCE)
                 .distinctUntilChanged()
                 .collect { result ->
                     model.getData(result, true).observe(viewLifecycleOwner, observerData)
@@ -170,6 +171,7 @@ class DictionaryFragment
     companion object {
         fun newInstance() = DictionaryFragment()
         private const val WORD_KEY = "word_key"
+        private const val DEBOUNCE : Long = 500
     }
 }
 
