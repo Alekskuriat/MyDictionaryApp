@@ -79,7 +79,9 @@ ext.dagger = [
 ext.room = [
         runtime : "androidx.room:room-runtime:" + ext.room,
         rxJava3 : "androidx.room:room-rxjava3:" + ext.room,
-        compiler: "androidx.room:room-compiler:" + ext.room
+        compiler: "androidx.room:room-compiler:" + ext.room,
+        ktx: "androidx.room:room-ktx:2.3.0" + ext.room
+
 ]
 ext.koin = [
         core   : "io.insert-koin:koin-core:" + ext.koin,

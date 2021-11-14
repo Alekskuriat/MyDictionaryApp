@@ -82,6 +82,7 @@ dependencies {
     //Room
     implementation rootProject.room.runtime
     implementation rootProject.room.rxJava3
+    implementation rootProject.room.ktx
     kapt rootProject.room.compiler
 
     //Koin
