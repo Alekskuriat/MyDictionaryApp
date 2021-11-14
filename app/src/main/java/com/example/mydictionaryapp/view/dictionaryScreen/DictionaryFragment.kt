@@ -11,19 +11,23 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.dictionaryapp.model.entities.DataModel
 import com.example.mydictionaryapp.R
 import com.example.mydictionaryapp.databinding.FragmentDictionaryScreenBinding
+import com.example.mydictionaryapp.view.detailsScreen.DetailsScreen
 import com.example.mydictionaryapp.view.dictionaryScreen.RV.DictionaryAdapter
 import com.example.mydictionaryapp.viewModel.DictionaryViewModel.DictionaryViewModel
+import com.github.terrakok.cicerone.Router
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class DictionaryFragment
     : Fragment(R.layout.fragment_dictionary_screen) {
 
+    private val router : Router by inject()
     private val viewModel: DictionaryViewModel by viewModel()
     lateinit var model: DictionaryViewModel
     private var adapter: DictionaryAdapter? = null
@@ -39,15 +43,7 @@ class DictionaryFragment
     private val onListItemClickListener: DictionaryAdapter.OnListItemClickListener =
         object : DictionaryAdapter.OnListItemClickListener {
             override fun onItemClick(data: DataModel) {
-                val translate = "${getString(R.string.translate_from_toast)}: ${data.text}"
-                val note =
-                    "${getString(R.string.note_from_toast)}: ${data.meanings?.first()?.translation?.note}"
-                val difficulty =
-                    "${getString(R.string.difficulty_from_toast)}: ${data.meanings?.first()?.difficultyLevel.toString()}"
-
-                Toast.makeText(
-                    context, translate + "\n" + note + "\n" + difficulty, Toast.LENGTH_SHORT
-                ).show()
+               router.navigateTo(DetailsScreen().show(data))
             }
         }
 

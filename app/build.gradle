@@ -95,6 +95,12 @@ dependencies {
     implementation rootProject.coroutines.android
     implementation rootProject.coroutines.retrofitAdapter
 
+    //Glide
+    implementation rootProject.glide.glide
+    kapt rootProject.glide.kapt
+
+    //Coil
+    implementation rootProject.coil
 
 
 

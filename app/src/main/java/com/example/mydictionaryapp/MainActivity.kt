@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId === R.id.action_history) {
+        if (item.itemId == R.id.action_history) {
             router.navigateTo(HistoryScreen().show())
         }
         return true

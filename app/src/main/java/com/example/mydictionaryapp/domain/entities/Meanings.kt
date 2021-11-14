@@ -1,7 +1,10 @@
 package com.example.dictionaryapp.model.entities
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 data class Meanings(
 
     @SerializedName("translation")
@@ -14,4 +17,4 @@ data class Meanings(
     val difficultyLevel: Int,
 
 
-)
+) : Parcelable

@@ -1,7 +1,10 @@
 package com.example.dictionaryapp.model.entities
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 data class Translation(
 
     @SerializedName("text")
@@ -10,4 +13,4 @@ data class Translation(
     @SerializedName("note")
     val note: String?
 
-)
+) : Parcelable
