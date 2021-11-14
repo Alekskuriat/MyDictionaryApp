@@ -2,7 +2,7 @@ package com.example.mydictionaryapp.viewModel.DictionaryViewModel
 
 import androidx.lifecycle.LiveData
 import com.example.dictionaryapp.model.entities.DataModel
-import com.example.mydictionaryapp.domain.dictionary.repo.DictionaryRepository
+import com.example.mydictionaryapp.domain.screens.dictionary.repo.DictionaryRepository
 import com.example.mydictionaryapp.viewModel.BaseViewModel
 import kotlinx.coroutines.*
 

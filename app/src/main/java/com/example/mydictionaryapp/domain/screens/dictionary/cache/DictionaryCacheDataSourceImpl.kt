@@ -1,10 +1,9 @@
-package com.example.mydictionaryapp.domain.dictionary.cache
+package com.example.mydictionaryapp.domain.screens.dictionary.cache
 
 import com.example.dictionaryapp.model.entities.DataModel
 import com.example.dictionaryapp.model.entities.Meanings
 import com.example.dictionaryapp.model.entities.Translation
 import com.example.mydictionaryapp.domain.database.HistoryDao
-import com.example.mydictionaryapp.domain.database.HistoryDataBase
 import com.example.mydictionaryapp.domain.database.HistoryEntity
 
 class DictionaryCacheDataSourceImpl(

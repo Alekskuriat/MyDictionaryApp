@@ -3,6 +3,7 @@ package com.example.mydictionaryapp
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.mydictionaryapp.view.dictionaryScreen.DictionaryScreen
+import com.example.mydictionaryapp.view.historyScreen.HistoryScreen
 import com.github.terrakok.cicerone.Cicerone
 import com.github.terrakok.cicerone.NavigatorHolder
 import com.github.terrakok.cicerone.Router
@@ -18,7 +19,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        savedInstanceState ?: router.newRootScreen(DictionaryScreen().show())
+        savedInstanceState ?: router.newRootScreen(HistoryScreen().show())
     }
 
     override fun onResumeFragments() {

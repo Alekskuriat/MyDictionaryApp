@@ -1,10 +1,8 @@
-package com.example.mydictionaryapp.domain.dictionary.repo
+package com.example.mydictionaryapp.domain.screens.dictionary.repo
 
 import com.example.dictionaryapp.model.entities.DataModel
-import com.example.mydictionaryapp.domain.dictionary.cache.DictionaryCacheDataSource
-import com.example.mydictionaryapp.domain.dictionary.dataSource.DictionaryRemoteDataSource
-import io.reactivex.rxjava3.core.Observable
-import javax.inject.Inject
+import com.example.mydictionaryapp.domain.screens.dictionary.cache.DictionaryCacheDataSource
+import com.example.mydictionaryapp.domain.screens.dictionary.dataSource.DictionaryRemoteDataSource
 
 class DictionaryRepositoryImpl
     (

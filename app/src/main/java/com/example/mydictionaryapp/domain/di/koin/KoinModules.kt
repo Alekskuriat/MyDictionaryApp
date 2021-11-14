@@ -2,31 +2,30 @@ package com.example.mydictionaryapp.domain.di.koin
 
 import androidx.room.Room
 import com.example.mydictionaryapp.BuildConfig
-import com.example.mydictionaryapp.MainActivity
 import com.example.mydictionaryapp.domain.api.ApiService
 import com.example.mydictionaryapp.domain.database.HistoryDao
 import com.example.mydictionaryapp.domain.database.HistoryDataBase
-import com.example.mydictionaryapp.domain.dictionary.cache.DictionaryCacheDataSource
-import com.example.mydictionaryapp.domain.dictionary.cache.DictionaryCacheDataSourceImpl
-import com.example.mydictionaryapp.domain.dictionary.dataSource.DictionaryRemoteDataSource
-import com.example.mydictionaryapp.domain.dictionary.dataSource.DictionaryRemoteDataSourceImpl
-import com.example.mydictionaryapp.domain.dictionary.repo.DictionaryRepository
-import com.example.mydictionaryapp.domain.dictionary.repo.DictionaryRepositoryImpl
+import com.example.mydictionaryapp.domain.screens.dictionary.cache.DictionaryCacheDataSource
+import com.example.mydictionaryapp.domain.screens.dictionary.cache.DictionaryCacheDataSourceImpl
+import com.example.mydictionaryapp.domain.screens.dictionary.dataSource.DictionaryRemoteDataSource
+import com.example.mydictionaryapp.domain.screens.dictionary.dataSource.DictionaryRemoteDataSourceImpl
+import com.example.mydictionaryapp.domain.screens.dictionary.repo.DictionaryRepository
+import com.example.mydictionaryapp.domain.screens.dictionary.repo.DictionaryRepositoryImpl
+import com.example.mydictionaryapp.domain.screens.history.cache.HistoryCacheDataSource
+import com.example.mydictionaryapp.domain.screens.history.cache.HistoryCacheDataSourceImpl
+import com.example.mydictionaryapp.domain.screens.history.repo.HistoryRepository
+import com.example.mydictionaryapp.domain.screens.history.repo.HistoryRepositoryImpl
 import com.example.mydictionaryapp.viewModel.DictionaryViewModel.DictionaryViewModel
-import com.example.popularlibraries.domain.schedulers.DefaultSchedulers
-import com.example.popularlibraries.domain.schedulers.Schedulers
+import com.example.mydictionaryapp.viewModel.HistoryViewModel.HistoryViewModel
 import com.github.terrakok.cicerone.Cicerone
 import com.github.terrakok.cicerone.NavigatorHolder
 import com.github.terrakok.cicerone.Router
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
-import io.reactivex.rxjava3.disposables.CompositeDisposable
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import org.koin.core.qualifier.named
 import org.koin.core.scope.get
 import org.koin.dsl.module
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
 class KoinModules {
@@ -67,9 +66,12 @@ class KoinModules {
 
         single<DictionaryRemoteDataSource> { DictionaryRemoteDataSourceImpl(apiService = get()) }
         single<DictionaryCacheDataSource> { DictionaryCacheDataSourceImpl(database = get()) }
+        single<HistoryCacheDataSource> {HistoryCacheDataSourceImpl(dataBase = get())}
 
         factory<DictionaryRepository> { DictionaryRepositoryImpl(data = get(), cache = get()) }
+        factory<HistoryRepository> { HistoryRepositoryImpl(cache = get()) }
         factory { DictionaryViewModel(repo = get()) }
+        factory { HistoryViewModel(repo = get()) }
 
     }
 
