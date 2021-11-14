@@ -1,11 +1,16 @@
 package com.example.mydictionaryapp.domain.database
 
+import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import kotlinx.parcelize.Parcelize
 
-@Entity(indices = arrayOf(Index(value = arrayOf("word"), unique = true)))
+@Parcelize
+@Entity(
+    indices = arrayOf(Index(value = arrayOf("word"), unique = true)
+    ))
 class HistoryEntity(
     @PrimaryKey
     @ColumnInfo(name = "word")
@@ -14,5 +19,7 @@ class HistoryEntity(
     @ColumnInfo(name = "description")
     var description: String?,
 
+    @ColumnInfo(name = "imageUrl")
+    var imageUrl: String?
 
-)
+) : Parcelable

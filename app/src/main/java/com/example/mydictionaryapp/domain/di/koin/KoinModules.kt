@@ -1,6 +1,8 @@
 package com.example.mydictionaryapp.domain.di.koin
 
 import androidx.room.Room
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.mydictionaryapp.BuildConfig
 import com.example.mydictionaryapp.domain.api.ApiService
 import com.example.mydictionaryapp.domain.database.HistoryDao
@@ -36,12 +38,15 @@ class KoinModules {
         single<NavigatorHolder> { get<Cicerone<Router>>().getNavigatorHolder() }
 
         single {
-            Room.databaseBuilder(get(), HistoryDataBase::class.java, "HistoryDB").build()
+            Room.databaseBuilder(get(), HistoryDataBase::class.java, "HistoryDB")
+                .addMigrations(object : Migration(1, 2) {
+                    override fun migrate(database: SupportSQLiteDatabase) {
+                        database.execSQL("ALTER TABLE HistoryEntity ADD COLUMN imageUrl text DEFAULT ''")
+                    }
+                })
+                .build()
         }
         single<HistoryDao> { get<HistoryDataBase>().historyDao() }
-
-
-
 
         single<OkHttpClient> {
             val okHttpClient = OkHttpClient.Builder()
@@ -66,7 +71,7 @@ class KoinModules {
 
         single<DictionaryRemoteDataSource> { DictionaryRemoteDataSourceImpl(apiService = get()) }
         single<DictionaryCacheDataSource> { DictionaryCacheDataSourceImpl(database = get()) }
-        single<HistoryCacheDataSource> {HistoryCacheDataSourceImpl(dataBase = get())}
+        single<HistoryCacheDataSource> { HistoryCacheDataSourceImpl(dataBase = get()) }
 
         factory<DictionaryRepository> { DictionaryRepositoryImpl(data = get(), cache = get()) }
         factory<HistoryRepository> { HistoryRepositoryImpl(cache = get()) }

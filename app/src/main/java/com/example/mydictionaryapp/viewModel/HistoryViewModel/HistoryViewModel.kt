@@ -14,6 +14,7 @@ class HistoryViewModel(
     private val dataLiveData: MutableLiveData<List<HistoryEntity>> = MutableLiveData()
     private val errorLiveData: MutableLiveData<Throwable> = MutableLiveData()
     private val loadingLiveData: MutableLiveData<Boolean> = MutableLiveData()
+    private val historySearchLiveData: MutableLiveData<List<HistoryEntity>> = MutableLiveData()
     private var job: Job = Job()
     private val viewModelCoroutineScope = CoroutineScope(
         Dispatchers.IO
@@ -24,6 +25,10 @@ class HistoryViewModel(
 
     internal fun getError(): LiveData<Throwable> = errorLiveData
     internal fun getLoading(): LiveData<Boolean> = loadingLiveData
+    internal fun getHistorySearch(word: String) : LiveData<List<HistoryEntity>> {
+        searchWord(word)
+        return historySearchLiveData
+    }
 
     fun getData(): LiveData<List<HistoryEntity>> {
         loadingData()
@@ -36,7 +41,15 @@ class HistoryViewModel(
         job = viewModelCoroutineScope.launch { startRepo() }
     }
 
+    private fun searchWord(word: String) {
+        job.cancel()
+        job = viewModelCoroutineScope.launch { searchRepo(word) }
+    }
 
+    private suspend fun searchRepo(word: String) {
+        loadingLiveData.postValue(false)
+        historySearchLiveData.postValue(repo.searchWord(word))
+    }
 
     private suspend fun startRepo() {
         loadingLiveData.postValue(false)

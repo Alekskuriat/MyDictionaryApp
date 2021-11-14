@@ -9,4 +9,21 @@ class HistoryRepositoryImpl(
 
     override suspend fun getData(): List<HistoryEntity> = cache.getData()
 
+    override suspend fun searchWord(word: String): List<HistoryEntity> {
+        val listSearchWord = mutableListOf<HistoryEntity>()
+        for (entity in cache.getData()) {
+            if (entity.word == word || entity.description == word)
+                listSearchWord.add(entity)
+        }
+        return listSearchWord
+    }
+
+
 }
+
+
+
+
+
+
+

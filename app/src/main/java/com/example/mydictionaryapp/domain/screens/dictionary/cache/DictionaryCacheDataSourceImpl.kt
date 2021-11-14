@@ -14,7 +14,8 @@ class DictionaryCacheDataSourceImpl(
         database.insert(
             HistoryEntity(
                 word = data.text.toString(),
-                description = data.meanings?.first()?.translation?.translation.toString()
+                description = data.meanings?.first()?.translation?.translation.toString(),
+                imageUrl = data.meanings?.first()?.imageUrl
             )
         )
     }
@@ -29,7 +30,7 @@ class DictionaryCacheDataSourceImpl(
                         translation = wordInDB.description,
                         note = null
                     ),
-                    imageUrl = null,
+                    imageUrl = wordInDB.imageUrl,
                     difficultyLevel = 0
                 )
             )

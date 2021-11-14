@@ -5,10 +5,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.dictionaryapp.model.entities.DataModel
 import com.example.mydictionaryapp.R
 import com.example.mydictionaryapp.domain.database.HistoryEntity
+import com.example.mydictionaryapp.view.dictionaryScreen.RV.DictionaryAdapter
 
 class HistoryAdapter(
+    private var onListHistoryItemClickListener: OnListHistoryItemClickListener,
     private var data: List<HistoryEntity>
 ) : RecyclerView.Adapter<HistoryAdapter.RecyclerItemViewHolder>() {
 
@@ -41,10 +44,18 @@ class HistoryAdapter(
             if (layoutPosition != RecyclerView.NO_POSITION) {
                 itemView.apply {
                     findViewById<TextView>(R.id.header_history_textview_recycler_item).text = data.word
+                    setOnClickListener { openInNewWindow(data) }
                 }
             }
         }
     }
 
+    private fun openInNewWindow(listItemData: HistoryEntity) {
+        onListHistoryItemClickListener.onItemClick(listItemData)
+    }
+
+    interface OnListHistoryItemClickListener {
+        fun onItemClick(data: HistoryEntity)
+    }
 
 }
