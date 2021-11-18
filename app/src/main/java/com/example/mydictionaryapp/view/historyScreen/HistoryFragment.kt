@@ -1,77 +1,58 @@
-package com.example.mydictionaryapp.view.dictionaryScreen
+package com.example.mydictionaryapp.view.historyScreen
 
 import android.os.Bundle
 import android.view.View
 import android.widget.SearchView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
-import com.example.dictionaryapp.model.entities.DataModel
 import com.example.mydictionaryapp.R
-import com.example.mydictionaryapp.databinding.FragmentDictionaryScreenBinding
+import com.example.mydictionaryapp.databinding.FragmentHistoryBinding
+import com.example.mydictionaryapp.domain.database.HistoryEntity
 import com.example.mydictionaryapp.view.detailsScreen.DetailsScreen
-import com.example.mydictionaryapp.view.dictionaryScreen.RV.DictionaryAdapter
-import com.example.mydictionaryapp.viewModel.DictionaryViewModel.DictionaryViewModel
+import com.example.mydictionaryapp.view.historyScreen.RV.HistoryAdapter
+import com.example.mydictionaryapp.viewModel.HistoryViewModel.HistoryViewModel
 import com.github.terrakok.cicerone.Router
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-
-class DictionaryFragment
-    : Fragment(R.layout.fragment_dictionary_screen) {
+class HistoryFragment : Fragment(R.layout.fragment_history) {
 
     private val router : Router by inject()
-    private val viewModel: DictionaryViewModel by viewModel()
-    lateinit var model: DictionaryViewModel
-    private var adapter: DictionaryAdapter? = null
-    private val viewBinding: FragmentDictionaryScreenBinding by viewBinding()
-    private val observerData = Observer<List<DataModel>> { showWords(it) }
+    private val viewModel: HistoryViewModel by viewModel()
+    private var adapter: HistoryAdapter? = null
+    private val viewBinding: FragmentHistoryBinding by viewBinding()
+    private val observerData = Observer<List<HistoryEntity>> { showWords(it) }
+    private val observerHistory = Observer<List<HistoryEntity>> { showWords(it) }
     private val observerErrors = Observer<Throwable> { showError(it) }
     private val observerLoading = Observer<Boolean> { showLoading(it) }
-    private var text = ""
     private val job: Job = Job()
     private val queryStateFlow = MutableStateFlow("")
     private var scope: CoroutineScope = CoroutineScope(Dispatchers.Main + job)
 
-    private val onListItemClickListener: DictionaryAdapter.OnListItemClickListener =
-        object : DictionaryAdapter.OnListItemClickListener {
-            override fun onItemClick(data: DataModel) {
-               router.navigateTo(DetailsScreen().show(data))
+    private val onListHistoryItemClickListener : HistoryAdapter.OnListHistoryItemClickListener =
+        object : HistoryAdapter.OnListHistoryItemClickListener {
+            override fun onItemClick(data: HistoryEntity) {
+                router.navigateTo(DetailsScreen().show(data))
             }
         }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        model = viewModel
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putString(WORD_KEY, text)
-    }
-
-    override fun onViewStateRestored(savedInstanceState: Bundle?) {
-        super.onViewStateRestored(savedInstanceState)
-        if (savedInstanceState != null) {
-            text = savedInstanceState.getString(WORD_KEY).toString()
-            model.getData(text, true).observe(viewLifecycleOwner, observerData)
-        }
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        model.getLoading().observe(viewLifecycleOwner, observerLoading)
-        model.getError().observe(viewLifecycleOwner, observerErrors)
+        viewModel.getLoading().observe(viewLifecycleOwner, observerLoading)
+        viewModel.getError().observe(viewLifecycleOwner, observerErrors)
+        viewModel.getData().observe(viewLifecycleOwner, observerData)
         setUpSearchStateFlow()
     }
-
 
     private fun setUpSearchStateFlow() {
         scope.launch {
@@ -79,7 +60,8 @@ class DictionaryFragment
                 .debounce(DEBOUNCE)
                 .distinctUntilChanged()
                 .collect { result ->
-                    model.getData(result, true).observe(viewLifecycleOwner, observerData)
+                    if (result.isNotEmpty())
+                    viewModel.getHistorySearch(result).observe(viewLifecycleOwner, observerHistory)
                 }
         }
 
@@ -90,6 +72,7 @@ class DictionaryFragment
                 return true
             }
 
+
             override fun onQueryTextChange(newText: String): Boolean {
                 queryStateFlow.value = newText
                 return true
@@ -97,17 +80,17 @@ class DictionaryFragment
         })
     }
 
-    private fun showWords(data: List<DataModel>?) {
+    private fun showWords(data: List<HistoryEntity>?) {
         if (data == null || data.isEmpty()) {
-            showErrorScreen(getString(R.string.empty_server_response_on_success))
+            showErrorScreen(getString(R.string.db_empty))
         } else {
             showViewSuccess()
             if (adapter == null) {
                 viewBinding.apply {
-                    mainActivityRecyclerview.layoutManager =
+                    historyActivityRecyclerview.layoutManager =
                         LinearLayoutManager(context)
-                    mainActivityRecyclerview.adapter =
-                        DictionaryAdapter(onListItemClickListener, data)
+                    historyActivityRecyclerview.adapter =
+                        HistoryAdapter(onListHistoryItemClickListener, data)
                 }
             } else {
                 adapter!!.setData(data)
@@ -128,7 +111,7 @@ class DictionaryFragment
         viewBinding.apply {
             errorTextview.text = error ?: getString(R.string.undefined_error)
             reloadButton.setOnClickListener {
-                model.getData("hi", true)
+                viewModel.getData()
                     .observe(viewLifecycleOwner, observerData)
             }
         }
@@ -136,7 +119,7 @@ class DictionaryFragment
 
     private fun showViewSuccess() {
         viewBinding.apply {
-            mainActivityRecyclerview.visibility = View.VISIBLE
+            historyActivityRecyclerview.visibility = View.VISIBLE
             progressBar.visibility = View.GONE
             errorLinearLayout.visibility = View.GONE
         }
@@ -144,7 +127,7 @@ class DictionaryFragment
 
     private fun showViewLoading() {
         viewBinding.apply {
-            mainActivityRecyclerview.visibility = View.GONE
+            historyActivityRecyclerview.visibility = View.GONE
             progressBar.visibility = View.VISIBLE
             errorLinearLayout.visibility = View.GONE
         }
@@ -152,11 +135,10 @@ class DictionaryFragment
 
     private fun showViewError() {
         viewBinding.apply {
-            mainActivityRecyclerview.visibility = View.GONE
+            historyActivityRecyclerview.visibility = View.GONE
             progressBar.visibility = View.GONE
             errorLinearLayout.visibility = View.VISIBLE
         }
-
     }
 
     override fun onDestroy() {
@@ -165,14 +147,8 @@ class DictionaryFragment
     }
 
     companion object {
-        fun newInstance() = DictionaryFragment()
-        private const val WORD_KEY = "word_key"
-        private const val DEBOUNCE : Long = 500
+        private const val DEBOUNCE = 500L
+        fun newInstance() = HistoryFragment()
     }
 }
-
-
-
-
-
 

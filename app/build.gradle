@@ -82,6 +82,7 @@ dependencies {
     //Room
     implementation rootProject.room.runtime
     implementation rootProject.room.rxJava3
+    implementation rootProject.room.ktx
     kapt rootProject.room.compiler
 
     //Koin
@@ -94,6 +95,12 @@ dependencies {
     implementation rootProject.coroutines.android
     implementation rootProject.coroutines.retrofitAdapter
 
+    //Glide
+    implementation rootProject.glide.glide
+    kapt rootProject.glide.kapt
+
+    //Coil
+    implementation rootProject.coil
 
 
 

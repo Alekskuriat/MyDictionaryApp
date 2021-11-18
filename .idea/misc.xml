@@ -3,10 +3,17 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Aleks/MyDictionaryApp/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.20153846153846153" />
+        <entry key="..\:/Users/Aleks/MyDictionaryApp/app/src/main/res/drawable/ic_launcher_background.xml" value="0.20153846153846153" />
+        <entry key="..\:/Users/Aleks/MyDictionaryApp/app/src/main/res/layout/activity_history_recycler_view_item.xml" value="0.16" />
         <entry key="..\:/Users/Aleks/MyDictionaryApp/app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="..\:/Users/Aleks/MyDictionaryApp/app/src/main/res/layout/fragment_blank.xml" value="0.17447916666666666" />
+        <entry key="..\:/Users/Aleks/MyDictionaryApp/app/src/main/res/layout/fragment_details.xml" value="0.22" />
         <entry key="..\:/Users/Aleks/MyDictionaryApp/app/src/main/res/layout/fragment_dictionary_screen.xml" value="0.18854166666666666" />
+        <entry key="..\:/Users/Aleks/MyDictionaryApp/app/src/main/res/layout/fragment_gistory.xml" value="0.1" />
+        <entry key="..\:/Users/Aleks/MyDictionaryApp/app/src/main/res/layout/fragment_history.xml" value="0.1712962962962963" />
         <entry key="..\:/Users/Aleks/MyDictionaryApp/app/src/main/res/layout/item_word_translate.xml" value="0.18854166666666666" />
+        <entry key="..\:/Users/Aleks/MyDictionaryApp/app/src/main/res/menu/app_menu.xml" value="0.25" />
       </map>
     </option>
   </component>
