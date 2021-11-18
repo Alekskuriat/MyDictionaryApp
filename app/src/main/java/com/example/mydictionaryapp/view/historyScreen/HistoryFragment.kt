@@ -7,13 +7,10 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
-import com.example.dictionaryapp.model.entities.DataModel
 import com.example.mydictionaryapp.R
 import com.example.mydictionaryapp.databinding.FragmentHistoryBinding
 import com.example.mydictionaryapp.domain.database.HistoryEntity
 import com.example.mydictionaryapp.view.detailsScreen.DetailsScreen
-import com.example.mydictionaryapp.view.dictionaryScreen.DictionaryFragment
-import com.example.mydictionaryapp.view.dictionaryScreen.RV.DictionaryAdapter
 import com.example.mydictionaryapp.view.historyScreen.RV.HistoryAdapter
 import com.example.mydictionaryapp.viewModel.HistoryViewModel.HistoryViewModel
 import com.github.terrakok.cicerone.Router
@@ -32,7 +29,6 @@ class HistoryFragment : Fragment(R.layout.fragment_history) {
 
     private val router : Router by inject()
     private val viewModel: HistoryViewModel by viewModel()
-    lateinit var model: HistoryViewModel
     private var adapter: HistoryAdapter? = null
     private val viewBinding: FragmentHistoryBinding by viewBinding()
     private val observerData = Observer<List<HistoryEntity>> { showWords(it) }
@@ -50,15 +46,11 @@ class HistoryFragment : Fragment(R.layout.fragment_history) {
             }
         }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        model = viewModel
-    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        model.getLoading().observe(viewLifecycleOwner, observerLoading)
-        model.getError().observe(viewLifecycleOwner, observerErrors)
-        model.getData().observe(viewLifecycleOwner, observerData)
+        viewModel.getLoading().observe(viewLifecycleOwner, observerLoading)
+        viewModel.getError().observe(viewLifecycleOwner, observerErrors)
+        viewModel.getData().observe(viewLifecycleOwner, observerData)
         setUpSearchStateFlow()
     }
 
@@ -69,7 +61,7 @@ class HistoryFragment : Fragment(R.layout.fragment_history) {
                 .distinctUntilChanged()
                 .collect { result ->
                     if (result.isNotEmpty())
-                    model.getHistorySearch(result).observe(viewLifecycleOwner, observerHistory)
+                    viewModel.getHistorySearch(result).observe(viewLifecycleOwner, observerHistory)
                 }
         }
 
@@ -119,7 +111,7 @@ class HistoryFragment : Fragment(R.layout.fragment_history) {
         viewBinding.apply {
             errorTextview.text = error ?: getString(R.string.undefined_error)
             reloadButton.setOnClickListener {
-                model.getData()
+                viewModel.getData()
                     .observe(viewLifecycleOwner, observerData)
             }
         }
@@ -155,7 +147,7 @@ class HistoryFragment : Fragment(R.layout.fragment_history) {
     }
 
     companion object {
-        private const val DEBOUNCE : Long = 500
+        private const val DEBOUNCE = 500L
         fun newInstance() = HistoryFragment()
     }
 }

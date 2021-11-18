@@ -9,8 +9,8 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 @Entity(
-    indices = arrayOf(Index(value = arrayOf("word"), unique = true)
-    ))
+    indices = arrayOf(Index(value = arrayOf("word"), unique = true))
+)
 class HistoryEntity(
     @PrimaryKey
     @ColumnInfo(name = "word")
