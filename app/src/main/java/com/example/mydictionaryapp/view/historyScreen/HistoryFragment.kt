@@ -6,9 +6,10 @@ import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import by.kirich1409.viewbindingdelegate.viewBinding
+//import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.mydictionaryapp.R
 import com.example.mydictionaryapp.databinding.FragmentHistoryBinding
+import com.example.mydictionaryapp.delegates.viewBinding
 import com.example.mydictionaryapp.domain.database.HistoryEntity
 import com.example.mydictionaryapp.view.detailsScreen.DetailsScreen
 import com.example.mydictionaryapp.view.historyScreen.RV.HistoryAdapter
@@ -33,7 +34,11 @@ class HistoryFragment : Fragment(R.layout.fragment_history) {
     private val router : Router by inject()
     private val viewModel: HistoryViewModel by scopeFragment.inject()
     private var adapter: HistoryAdapter? = null
-    private val viewBinding: FragmentHistoryBinding by viewBinding()
+    //private val viewBinding: FragmentHistoryBinding by viewBinding()
+
+    private val viewBinding: FragmentHistoryBinding by viewBinding(
+        FragmentHistoryBinding::bind
+    )
     private val observerData = Observer<List<HistoryEntity>> { showWords(it) }
     private val observerHistory = Observer<List<HistoryEntity>> { showWords(it) }
     private val observerErrors = Observer<Throwable> { showError(it) }

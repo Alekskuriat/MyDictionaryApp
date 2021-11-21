@@ -11,6 +11,8 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.dictionaryapp.model.entities.DataModel
 import com.example.mydictionaryapp.R
 import com.example.mydictionaryapp.databinding.FragmentDictionaryScreenBinding
+import com.example.mydictionaryapp.databinding.FragmentHistoryBinding
+import com.example.mydictionaryapp.delegates.viewBinding
 import com.example.mydictionaryapp.view.detailsScreen.DetailsScreen
 import com.example.mydictionaryapp.view.dictionaryScreen.RV.DictionaryAdapter
 import com.example.mydictionaryapp.viewModel.DictionaryViewModel.DictionaryViewModel
@@ -33,7 +35,11 @@ class DictionaryFragment
     private val viewModel: DictionaryViewModel by scopeFragment.inject()
     lateinit var model: DictionaryViewModel
     private var adapter: DictionaryAdapter? = null
-    private val viewBinding: FragmentDictionaryScreenBinding by viewBinding()
+    //private val viewBinding: FragmentDictionaryScreenBinding by viewBinding()
+
+    private val viewBinding: FragmentDictionaryScreenBinding by viewBinding(
+        FragmentDictionaryScreenBinding::bind
+    )
     private val observerData = Observer<List<DataModel>> { showWords(it) }
     private val observerErrors = Observer<Throwable> { showError(it) }
     private val observerLoading = Observer<Boolean> { showLoading(it) }
