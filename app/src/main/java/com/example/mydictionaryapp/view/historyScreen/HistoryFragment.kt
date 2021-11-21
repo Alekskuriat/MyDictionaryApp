@@ -22,13 +22,16 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.getKoin
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.qualifier.named
 
 class HistoryFragment : Fragment(R.layout.fragment_history) {
 
+    private val scopeFragment = getKoin().createScope("History_scope_id", named("History_fragment"))
     private val router : Router by inject()
-    private val viewModel: HistoryViewModel by viewModel()
+    private val viewModel: HistoryViewModel by scopeFragment.inject()
     private var adapter: HistoryAdapter? = null
     private val viewBinding: FragmentHistoryBinding by viewBinding()
     private val observerData = Observer<List<HistoryEntity>> { showWords(it) }

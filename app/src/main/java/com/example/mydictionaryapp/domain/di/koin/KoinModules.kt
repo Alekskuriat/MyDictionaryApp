@@ -17,6 +17,8 @@ import com.example.mydictionaryapp.domain.screens.history.cache.HistoryCacheData
 import com.example.mydictionaryapp.domain.screens.history.cache.HistoryCacheDataSourceImpl
 import com.example.mydictionaryapp.domain.screens.history.repo.HistoryRepository
 import com.example.mydictionaryapp.domain.screens.history.repo.HistoryRepositoryImpl
+import com.example.mydictionaryapp.view.dictionaryScreen.DictionaryFragment
+import com.example.mydictionaryapp.view.historyScreen.HistoryFragment
 import com.example.mydictionaryapp.viewModel.DictionaryViewModel.DictionaryViewModel
 import com.example.mydictionaryapp.viewModel.HistoryViewModel.HistoryViewModel
 import com.github.terrakok.cicerone.Cicerone
@@ -25,6 +27,8 @@ import com.github.terrakok.cicerone.Router
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.core.qualifier.named
 import org.koin.core.scope.get
 import org.koin.dsl.module
 import retrofit2.Retrofit
@@ -33,6 +37,19 @@ import retrofit2.converter.gson.GsonConverterFactory
 class KoinModules {
 
     fun getModules() = module {
+        scope(named("Dictionary_fragment")) {
+            scoped<DictionaryRemoteDataSource> { DictionaryRemoteDataSourceImpl(apiService = get()) }
+            scoped<DictionaryCacheDataSource> { DictionaryCacheDataSourceImpl(database = get()) }
+            factory<DictionaryRepository> { DictionaryRepositoryImpl(data = get(), cache = get()) }
+            viewModel { DictionaryViewModel(repo = get()) }
+        }
+
+        scope(named("History_fragment")){
+            scoped<HistoryCacheDataSource> { HistoryCacheDataSourceImpl(dataBase = get()) }
+            factory<HistoryRepository> { HistoryRepositoryImpl(cache = get()) }
+            viewModel { HistoryViewModel(repo = get()) }
+        }
+
         single<Cicerone<Router>> { Cicerone.create() }
         single<Router> { get<Cicerone<Router>>().router }
         single<NavigatorHolder> { get<Cicerone<Router>>().getNavigatorHolder() }
@@ -69,14 +86,8 @@ class KoinModules {
                 .create(ApiService::class.java)
         }
 
-        single<DictionaryRemoteDataSource> { DictionaryRemoteDataSourceImpl(apiService = get()) }
-        single<DictionaryCacheDataSource> { DictionaryCacheDataSourceImpl(database = get()) }
-        single<HistoryCacheDataSource> { HistoryCacheDataSourceImpl(dataBase = get()) }
 
-        factory<DictionaryRepository> { DictionaryRepositoryImpl(data = get(), cache = get()) }
-        factory<HistoryRepository> { HistoryRepositoryImpl(cache = get()) }
-        factory { DictionaryViewModel(repo = get()) }
-        factory { HistoryViewModel(repo = get()) }
+
 
     }
 

@@ -20,15 +20,17 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.getKoin
 import org.koin.android.ext.android.inject
-import org.koin.androidx.viewmodel.ext.android.viewModel
-
+import org.koin.core.qualifier.named
 
 class DictionaryFragment
     : Fragment(R.layout.fragment_dictionary_screen) {
 
+
+    private val scopeFragment = getKoin().createScope("Dictionary_fragment_id", named("Dictionary_fragment") )
     private val router : Router by inject()
-    private val viewModel: DictionaryViewModel by viewModel()
+    private val viewModel: DictionaryViewModel by scopeFragment.inject()
     lateinit var model: DictionaryViewModel
     private var adapter: DictionaryAdapter? = null
     private val viewBinding: FragmentDictionaryScreenBinding by viewBinding()
