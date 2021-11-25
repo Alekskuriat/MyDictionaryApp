@@ -44,7 +44,7 @@ class KoinModules {
             viewModel { DictionaryViewModel(repo = get()) }
         }
 
-        scope(named("History_fragment")){
+        scope(named("History_fragment")) {
             scoped<HistoryCacheDataSource> { HistoryCacheDataSourceImpl(dataBase = get()) }
             factory<HistoryRepository> { HistoryRepositoryImpl(cache = get()) }
             viewModel { HistoryViewModel(repo = get()) }
@@ -85,8 +85,6 @@ class KoinModules {
                 .build()
                 .create(ApiService::class.java)
         }
-
-
 
 
     }
