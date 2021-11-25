@@ -3,18 +3,18 @@ package com.example.mydictionaryapp.view.detailsScreen
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
-import by.kirich1409.viewbindingdelegate.viewBinding
 import coil.api.load
 import coil.transform.CircleCropTransformation
 import com.example.dictionaryapp.model.entities.DataModel
 import com.example.mydictionaryapp.R
 import com.example.mydictionaryapp.databinding.FragmentDetailsBinding
+import com.example.mydictionaryapp.delegates.viewBinding
 import com.example.mydictionaryapp.domain.database.HistoryEntity
 
 
 class DetailsFragment : Fragment(R.layout.fragment_details) {
 
-    private val viewBinding: FragmentDetailsBinding by viewBinding()
+    private val viewBinding: FragmentDetailsBinding by viewBinding(FragmentDetailsBinding::bind)
     private lateinit var data: DataModel
     private lateinit var dataHistory: HistoryEntity
 

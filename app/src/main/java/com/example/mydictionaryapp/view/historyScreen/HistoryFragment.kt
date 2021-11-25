@@ -6,9 +6,9 @@ import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.mydictionaryapp.R
 import com.example.mydictionaryapp.databinding.FragmentHistoryBinding
+import com.example.mydictionaryapp.delegates.viewBinding
 import com.example.mydictionaryapp.domain.database.HistoryEntity
 import com.example.mydictionaryapp.view.detailsScreen.DetailsScreen
 import com.example.mydictionaryapp.view.historyScreen.RV.HistoryAdapter
@@ -22,15 +22,18 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.getKoin
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.qualifier.named
 
 class HistoryFragment : Fragment(R.layout.fragment_history) {
 
+    private val scopeFragment = getKoin().createScope("History_scope_id", named("History_fragment"))
     private val router : Router by inject()
-    private val viewModel: HistoryViewModel by viewModel()
+    private val viewModel: HistoryViewModel by scopeFragment.inject()
     private var adapter: HistoryAdapter? = null
-    private val viewBinding: FragmentHistoryBinding by viewBinding()
+    private val viewBinding: FragmentHistoryBinding by viewBinding(FragmentHistoryBinding::bind)
     private val observerData = Observer<List<HistoryEntity>> { showWords(it) }
     private val observerHistory = Observer<List<HistoryEntity>> { showWords(it) }
     private val observerErrors = Observer<Throwable> { showError(it) }

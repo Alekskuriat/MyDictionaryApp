@@ -3,14 +3,13 @@ package com.example.mydictionaryapp.view.dictionaryScreen
 import android.os.Bundle
 import android.view.View
 import android.widget.SearchView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.dictionaryapp.model.entities.DataModel
 import com.example.mydictionaryapp.R
 import com.example.mydictionaryapp.databinding.FragmentDictionaryScreenBinding
+import com.example.mydictionaryapp.delegates.viewBinding
 import com.example.mydictionaryapp.view.detailsScreen.DetailsScreen
 import com.example.mydictionaryapp.view.dictionaryScreen.RV.DictionaryAdapter
 import com.example.mydictionaryapp.viewModel.DictionaryViewModel.DictionaryViewModel
@@ -20,18 +19,20 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.getKoin
 import org.koin.android.ext.android.inject
-import org.koin.androidx.viewmodel.ext.android.viewModel
-
+import org.koin.core.qualifier.named
 
 class DictionaryFragment
     : Fragment(R.layout.fragment_dictionary_screen) {
 
+
+    private val scopeFragment = getKoin().createScope("Dictionary_fragment_id", named("Dictionary_fragment") )
     private val router : Router by inject()
-    private val viewModel: DictionaryViewModel by viewModel()
+    private val viewModel: DictionaryViewModel by scopeFragment.inject()
     lateinit var model: DictionaryViewModel
     private var adapter: DictionaryAdapter? = null
-    private val viewBinding: FragmentDictionaryScreenBinding by viewBinding()
+    private val viewBinding: FragmentDictionaryScreenBinding by viewBinding(FragmentDictionaryScreenBinding::bind)
     private val observerData = Observer<List<DataModel>> { showWords(it) }
     private val observerErrors = Observer<Throwable> { showError(it) }
     private val observerLoading = Observer<Boolean> { showLoading(it) }
