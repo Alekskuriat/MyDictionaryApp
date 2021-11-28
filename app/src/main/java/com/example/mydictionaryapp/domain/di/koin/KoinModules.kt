@@ -37,18 +37,23 @@ import retrofit2.converter.gson.GsonConverterFactory
 class KoinModules {
 
     fun getModules() = module {
-        scope(named("Dictionary_fragment")) {
+        /*scope(named("Dictionary_fragment")) {
             scoped<DictionaryRemoteDataSource> { DictionaryRemoteDataSourceImpl(apiService = get()) }
             scoped<DictionaryCacheDataSource> { DictionaryCacheDataSourceImpl(database = get()) }
             factory<DictionaryRepository> { DictionaryRepositoryImpl(data = get(), cache = get()) }
             viewModel { DictionaryViewModel(repo = get()) }
-        }
+        }*/
 
         scope(named("History_fragment")) {
             scoped<HistoryCacheDataSource> { HistoryCacheDataSourceImpl(dataBase = get()) }
             factory<HistoryRepository> { HistoryRepositoryImpl(cache = get()) }
             viewModel { HistoryViewModel(repo = get()) }
         }
+
+        single<DictionaryRemoteDataSource> { DictionaryRemoteDataSourceImpl(apiService = get()) }
+        single<DictionaryCacheDataSource> { DictionaryCacheDataSourceImpl(database = get()) }
+        factory<DictionaryRepository> { DictionaryRepositoryImpl(data = get(), cache = get()) }
+        viewModel { DictionaryViewModel(repo = get()) }
 
         single<Cicerone<Router>> { Cicerone.create() }
         single<Router> { get<Cicerone<Router>>().router }

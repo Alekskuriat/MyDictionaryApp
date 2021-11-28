@@ -37,6 +37,7 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+
 }
 
 dependencies {
@@ -102,6 +103,6 @@ dependencies {
     //Coil
     implementation rootProject.coil
 
-
-
+    testImplementation "io.insert-koin:koin-test:3.1.2"
+    testImplementation "io.insert-koin:koin-test-junit4:3.1.2"
 }
